@@ -1,0 +1,42 @@
+# Environment and configuration
+python-dotenv>=1.1.0
+
+# Logging
+structlog>=25.3.0
+
+# LangGraph - Agent framework with checkpointer support
+langgraph>=0.2.0
+langgraph-checkpoint-redis>=0.1.0
+langsmith>=0.2.0
+
+# LangChain Core - Base functionality
+langchain-core>=0.3.0
+langchain>=1.0.0
+langchain-classic>=1.0.0
+
+# LangChain OpenAI - LLM and embeddings
+langchain-openai>=0.3.0
+
+# LangChain MongoDB - Vector store
+langchain-mongodb>=0.2.0
+
+# LangChain Community - Document loaders (FireCrawl)
+langchain-community>=0.3.0
+
+# LangChain Text Splitters - Document chunking
+langchain-text-splitters>=0.3.0
+
+# Database and storage
+pymongo>=4.12.0
+redis>=5.2.0
+
+# OpenAI SDK (required by langchain-openai)
+openai>=1.70.0
+
+# Web Scraping
+firecrawl-py>=0.0.20
+
+# FastAPI and web server
+fastapi>=0.115.0
+uvicorn>=0.34.0
+requests>=2.32.0

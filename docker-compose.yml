@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    image: yichin_chatbot
+    container_name: yichin_chatbot
+    ports:
+      - "8511:8511"
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8511 --reload
+    restart: always
+    volumes:
+      # Mount entire project root for development
+      - .:/app:rw
+    networks:
+      - yichin_chatbot_net
+
+  redis:
+    image: "redis/redis-stack:latest"
+    container_name: redis_yichin_chat_server
+    ports:
+      - "6383:6379"  # Redis port (changed from 6382 to avoid conflict)
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: always
+    volumes:
+      - redis-data:/data
+    networks:
+      - yichin_chatbot_net
+
+volumes:
+  redis-data:
+
+networks:
+  yichin_chatbot_net:
+    driver: bridge
+
