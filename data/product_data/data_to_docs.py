@@ -3,7 +3,7 @@ import os
 import re
 from typing import List, Dict
 from openai import OpenAI
-from product_data.product_data import PRODUCT_DATA
+from data.product_data.product_data import PRODUCT_DATA
 from langchain_core.documents import Document
 from rag.mongo_db_utils.add_data import add_documents
 from rag.mongo_db_utils.vector_store_utils import get_vector_store

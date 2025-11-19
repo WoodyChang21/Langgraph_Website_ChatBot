@@ -1,8 +1,8 @@
 """ This file loads the data from the data source through web crawling and add the data to MongoDB"""
-from qa_data.website_to_docs import FireCrawlWebsiteToDocs
-from qa_data.data_sources import URLS_CONFIG
-from product_data.product_data import PRODUCT_DATA
-from product_data.data_to_docs import transform_product
+from data.qa_data.website_to_docs import FireCrawlWebsiteToDocs
+from data.qa_data.data_sources import URLS_CONFIG
+from data.product_data.product_data import PRODUCT_DATA
+from data.product_data.data_to_docs import transform_product
 from rag.mongo_db_utils.add_data import add_documents
 from rag.mongo_db_utils.create_index import create_index
 from rag.mongo_db_utils.vector_store_utils import get_vector_store
@@ -30,5 +30,5 @@ def product_data_processing():
     add_documents(docs, product_vectorstore)
 
 if __name__ == "__main__":
-    # qa_data_processing()
-    product_data_processing()
+    qa_data_processing()
+    # product_data_processing()

@@ -1,4 +1,4 @@
-from agent.agent import initialize_agent, agent
+from agent.agent import initialize_agent
 from langchain_core.messages import HumanMessage, AIMessage, AIMessageChunk
 from langsmith import uuid7
 
@@ -15,8 +15,7 @@ async def get_agent_answer(user_request: str, uuid: str):
     Returns:
         Agent's response content
     """
-    if agent is None:
-        raise RuntimeError("Agent not initialized. Call initialize_agent() first.")
+    agent = await initialize_agent()
     
     config = {"configurable": {"thread_id": uuid}}
     result = await agent.ainvoke(
@@ -26,8 +25,7 @@ async def get_agent_answer(user_request: str, uuid: str):
     return result["messages"][-1].content
 
 async def get_agent_answer_stream(user_request: str, uuid: str):
-    if agent is None:
-        raise RuntimeError("Agent not initialized. Call initialize_agent() first.")
+    agent = await initialize_agent()
     
     config = {"configurable": {"thread_id": uuid}}
     async for chunk in agent.astream(
@@ -46,7 +44,7 @@ if __name__ == "__main__":
     
     async def main():
         # Initialize agent once
-        await initialize_agent()
+        agent = await initialize_agent()
         config = {"configurable": {"thread_id": uuid7()}}
         
         while True:
@@ -60,7 +58,7 @@ if __name__ == "__main__":
     
 
     async def stream_main():
-        await initialize_agent()
+        agent = await initialize_agent()
         config = {"configurable": {"thread_id": uuid7()}}
         async for chunk in get_agent_answer_stream("我要怎麼知道我的床墊尺寸，我是大學生", config["configurable"]["thread_id"]):
             print("Assistant: ", chunk)

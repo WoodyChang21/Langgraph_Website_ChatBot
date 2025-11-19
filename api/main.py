@@ -4,41 +4,22 @@ Main FastAPI Application for YiChin Chatbot System
 Provides OpenAI-compatible chat endpoints for chatbot integration.
 """
 
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
 
 from api.routers import chatbot_response
-from agent.agent import initialize_agent
+# Agent is automatically initialized when imported
+from agent.agent import agent
 
 # Initialize logger
 logger = structlog.get_logger()
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Lifespan context manager for FastAPI.
-    Initializes agent at startup and cleans up at shutdown.
-    """
-    # Startup: Initialize agent
-    logger.info("Initializing agent...")
-    await initialize_agent()
-    logger.info("Agent initialized successfully")
-    
-    yield
-    
-    # Shutdown: Cleanup (if needed)
-    logger.info("Shutting down...")
-
-
-# Create FastAPI app with lifespan
+# Create FastAPI app
 app = FastAPI(
     title="YiChin Chatbot API",
     version="1.0.0",
     description="億進寢具 Chatbot API with RAG and conversation memory",
-    lifespan=lifespan
 )
 
 # CORS middleware (for web frontends)

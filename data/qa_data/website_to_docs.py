@@ -18,7 +18,7 @@ class FireCrawlWebsiteToDocs:
     
 
     def split_docs(self, docs: List[Document]):
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
         splitted_docs = text_splitter.split_documents(docs)
         log_success(f"Split {len(docs)} documents into {len(splitted_docs)} chunks")
         return splitted_docs
@@ -46,10 +46,64 @@ class FireCrawlWebsiteToDocs:
 
 
 if __name__ == "__main__":
-    # url = "https://www.countess.tw/v2/Official/BrandStory"
-    url = "https://www.countess.tw/page/childrens_bedding"
-    mode = "scrape"
+    import time
+    from firecrawl.v2.utils.error_handler import InternalServerError
+    
     firecrawl = FireCrawlWebsiteToDocs()
-    print(firecrawl.load_url(url, "幼兒床墊"))
-    # print(firecrawl.load_url_to_splitted_docs(url, "品牌故事"))
-    # print(firecrawl.load_url(url, "品牌故事"))
+    from data.qa_data.data_sources import URLS_CONFIG
+    
+    # Create the markdown directory if it doesn't exist
+    markdown_dir = "data/qa_data/markdown"
+    os.makedirs(markdown_dir, exist_ok=True)
+    
+    failed_urls = []
+    successful_urls = []
+    
+    for source, url in URLS_CONFIG.items():
+        try:
+            log_info(f"Processing {source} from {url}...")
+            docs = firecrawl.load_url(url, source)
+            
+            if not docs:
+                log_warning(f"No documents retrieved for {source}")
+                failed_urls.append((source, url, "No documents retrieved"))
+                continue
+            
+            for doc in docs:
+                markdown_content = doc.page_content
+                markdown_file = f"{markdown_dir}/{source}.md"
+                with open(markdown_file, "w", encoding="utf-8") as f:
+                    f.write(markdown_content)
+                log_success(f"Saved {source} to {markdown_file}")
+                successful_urls.append(source)
+            
+            # Add a small delay between requests to avoid rate limiting
+            time.sleep(2)
+            
+        except InternalServerError as e:
+            error_msg = str(e)
+            log_error(f"FireCrawl error for {source} ({url}): {error_msg}")
+            failed_urls.append((source, url, "FireCrawl Internal Server Error"))
+            # Continue with next URL
+            continue
+        except Exception as e:
+            error_msg = str(e)
+            log_error(f"Failed to process {source} ({url}): {error_msg}")
+            failed_urls.append((source, url, error_msg))
+            # Continue with next URL
+            continue
+    
+    # Report summary
+    log_header("Processing Summary")
+    log_success(f"Successfully processed: {len(successful_urls)} URLs")
+    if successful_urls:
+        for source in successful_urls:
+            log_success(f"  ✓ {source}")
+    
+    if failed_urls:
+        log_warning(f"Failed to process: {len(failed_urls)} URLs")
+        for source, url, error in failed_urls:
+            log_error(f"  ✗ {source}: {url}")
+            log_error(f"    Error: {error[:150]}")
+    else:
+        log_success("All URLs processed successfully!")

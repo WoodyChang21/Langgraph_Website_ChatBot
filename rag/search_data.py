@@ -30,7 +30,7 @@ def search_qa_data(query, k: int = 5):
     retriever = MongoDBAtlasHybridSearchRetriever(
         vectorstore = qa_store,
         search_index_name = "search_index",
-        top_k = 5,
+        top_k = k,
         fulltext_penalty = 50,
         vector_penalty = 50)
 
@@ -47,6 +47,8 @@ def search_qa_data(query, k: int = 5):
             "rank": document.metadata.get("rank", 0),
         }
         formatted_results.append(formatted_result)
+
+    formatted_results.sort(key=lambda x: x["rank"])
 
     # If no relevant results found, provide a helpful fallback
     if not formatted_results:
@@ -191,6 +193,8 @@ def search_product_data(
         }
         formatted_results.append(ret)
     
+    formatted_results.sort(key=lambda x: x["rank"])
+    
     if not formatted_results:
         formatted_results = [
             {
@@ -206,6 +210,6 @@ def search_product_data(
 
 if __name__ == "__main__":
     # Check the accuracy of get_background_infos function
-    query = "防塵 小孩 棉被"
+    query = "羽絨被"
     # print(search_data(query, score_threshold=0.7))
     print(search_product_data(query))
