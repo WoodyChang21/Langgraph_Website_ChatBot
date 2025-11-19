@@ -1,8 +1,6 @@
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
-from langsmith import uuid7
-import asyncio
-
+from agent.memory.trim_message import trim_messages_middleware
 from agent.memory.checkpointer import get_shared_checkpointer
 from agent.tools.tool import rag_search, product_search, product_filter
 from agent.prompt.read_prompt import SYSTEM_PROMPT_TEMPLATE
@@ -39,6 +37,7 @@ async def initialize_agent(use_checkpointer: bool = True):
         tools=[rag_search, product_search, product_filter],
         checkpointer=checkpointer,
         system_prompt=SYSTEM_PROMPT_TEMPLATE,
+        middleware=[trim_messages_middleware],  # ← Add middleware here
     )
     
     return agent

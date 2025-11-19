@@ -3,7 +3,6 @@ from langchain_core.messages import HumanMessage, AIMessage, AIMessageChunk
 from langsmith import uuid7
 
 
-
 async def get_agent_answer(user_request: str, uuid: str):
     """
     Get agent answer for a user request.

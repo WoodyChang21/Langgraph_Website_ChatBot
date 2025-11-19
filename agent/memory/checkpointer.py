@@ -13,7 +13,7 @@ load_dotenv()
 
 # Get Redis URL from environment or use default
 # Default assumes local development; Docker Compose will override with redis://redis:6379/0
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6382/0")
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6383/0")
 
 # Redis connection parameters for stability
 # Keep it simple - only essential timeout settings
@@ -26,7 +26,7 @@ REDIS_CONN_KWARGS = {
 }
 
 # This is for Redis Chat Storage Settings
-TTL_MINUTES = 60  # e.g., expire after 60 minutes of inactivity
+TTL_MINUTES = 15  # e.g., expire after 60 minutes of inactivity
 ttl_config = {
     "default_ttl": TTL_MINUTES,  # TTL is in minutes
     "refresh_on_read": True,  # touching a thread resets its TTL
