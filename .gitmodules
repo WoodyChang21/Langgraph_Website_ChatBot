@@ -1,0 +1,3 @@
+[submodule "ragas"]
+	path = ragas
+	url = https://github.com/Retailing-Data/AIoT_modules_RAGAs.git
