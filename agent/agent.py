@@ -1,16 +1,10 @@
-# Note: Using langgraph.prebuilt.create_react_agent despite deprecation warning
-# because it's the only version that supports checkpointer parameter.
-# The deprecation suggests using langchain.agents.create_agent, but that version
-# doesn't support checkpointer. This version still works and is the recommended
-# approach for agents with memory/checkpointing.
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, AIMessage, AIMessageChunk
 from langsmith import uuid7
 
 from agent.memory.checkpointer import get_shared_checkpointer
 from agent.tools.tool import rag_search, product_search, product_filter
-
+from agent.prompt.read_prompt import SYSTEM_PROMPT_TEMPLATE
 
 # Initialize LLM
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
@@ -40,6 +34,7 @@ async def initialize_agent(use_checkpointer: bool = True):
         model=llm,
         tools=[rag_search, product_search, product_filter],
         checkpointer=checkpointer,
+        system_prompt=SYSTEM_PROMPT_TEMPLATE,
     )
     
     return agent

@@ -2,7 +2,7 @@ from langchain_core.tools import tool
 from typing import List, Dict, Any, Optional, Literal
 
 from rag.search_data import search_qa_data, search_product_data, filter_products
-from product_data.product_data import PRODUCT_CATEGORIES, PRODUCT_NAME
+from data.product_data.product_data import PRODUCT_CATEGORIES, PRODUCT_NAME
 from agent.tools.tool_schema import ProductSearchSchema, ProductFilterSchema
 
 

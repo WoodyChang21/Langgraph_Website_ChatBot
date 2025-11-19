@@ -5,7 +5,7 @@ from typing import Optional, Literal
 import logger
 from dotenv import load_dotenv
 
-from product_data.product_data import PRODUCT_CATEGORIES, PRODUCT_NAME
+from data.product_data.product_data import PRODUCT_CATEGORIES, PRODUCT_NAME
 
 load_dotenv()
 
