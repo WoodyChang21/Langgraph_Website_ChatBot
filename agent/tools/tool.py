@@ -6,36 +6,22 @@ from data.product_data.product_data import PRODUCT_CATEGORIES, PRODUCT_NAME
 from agent.tools.tool_schema import ProductSearchSchema, ProductFilterSchema
 
 
-@tool("faq_search_tool")
+@tool("search_faq_tool")
 def rag_search(query: str) -> List[Dict[str, Any]]:
     """
-    DO NOT USE THIS TOOL FOR ANY PRODUCT-RELATED QUESTIONS.
-
-    Use only for brand/company FAQs like brand story, ESG, bedding maintenance, etc.
-    NEVER use this tool for product features, suitability, sizes, or recommendations — use `product_search_tool` instead.
-
-    Searches the Countess (億進寢具) knowledge base for relevant info.
-
-    Sources include:
-    - 品牌故事 (Brand Story)
-    - 商店簡介 (Store Introduction)
-    - 寢具知識 (Bedding Q&A): kindergarten bedding, dorm life, pillow/quilt selection, maintenance
-    - 企業報導 (Company Reports): ESG/sustainability
-
-    Args:
-        query: The user's question (include context only if it's a follow-up).
-
-    Returns:
-        List of matching documents:
-        - source: Document source
-        - url: Link to document
-        - content: Text content
-        - rank: Relevance rank (0–4)
+    📚 General Knowledge & Non-Product Queries.
+    
+    Use this tool for ANYTHING that is NOT related to products.
+    - Brand info, Store locations, ESG.
+    - General Knowledge
+    - Policy questions (Returns, Shipping).
+    
+    ⛔ HARD STOP: If user asks for prices, specs, or any product related information, DO NOT use this.
     """
     rag_data = search_qa_data(query)
     return rag_data
 
-@tool("product_search_tool", args_schema=ProductSearchSchema)
+@tool("search_product_tool", args_schema=ProductSearchSchema)
 def product_search(
     query: str,
     category: Optional[Literal[*PRODUCT_CATEGORIES]] = None,
@@ -45,14 +31,16 @@ def product_search(
     size: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     """
-    SCOPE: Use for semantic product queries — features, recommendations, or fuzzy matches.
-    DO NOT use for exact filtering (e.g., "products under 2500") — use `product_filter_tool` instead.
-
-    This tool uses natural language vector search to find relevant products based on meaning.
-    Only include the filter parameters if the user explicitly asks for it. Otherwise, always default to None for all filter parameters.
-
-    Returns:
-        A list of product matches ranked by semantic similarity.
+    🛍️ Product Features, Recommendations & Semantic Search.
+    
+    Use this for ALL product-related questions that are not strict filters.
+    - **Features:** "What are the features of the Tencel quilt?"
+    - **Recommendations:** "I want something for winter", "Which is good for allergies?"
+    - **Subjective/Fuzzy:** "Find me a soft quilt."
+    
+    Args:
+        query: Descriptive/subjective part of user's question about product features, recommendations, or needs.
+        category, product_name, price_min, price_max, size: Only set if user EXPLICITLY mentions them.
     """
     return search_product_data(
         query=query,
@@ -63,7 +51,7 @@ def product_search(
         size=size
     )
 
-@tool("product_filter_tool", args_schema=ProductFilterSchema)
+@tool("filter_product_tool", args_schema=ProductFilterSchema)
 def product_filter(
     category: Optional[Literal[PRODUCT_CATEGORIES]] = None,
     product_name: Optional[Literal[PRODUCT_NAME]] = None,
@@ -72,11 +60,12 @@ def product_filter(
     size: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     """
-    SCOPE: Use for exact product filtering by category, price, or size.
-    DO NOT use for fuzzy or descriptive queries — use `product_search_tool` instead.
-
-    Returns:
-        A list of all products matching the exact filter criteria.
+    🔍 Exact Database Filtering (Strict Constraints).
+    
+    Use when: The user acts like a database filter, providing **rigid, objective constraints** to narrow down the list of available products.
+    
+    Args:
+        category, product_name, price_min, price_max, size: Only set parameters that user EXPLICITLY mentions.
     """
     return filter_products(
         category=category,

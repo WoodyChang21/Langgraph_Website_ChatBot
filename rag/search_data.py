@@ -210,6 +210,6 @@ def search_product_data(
 
 if __name__ == "__main__":
     # Check the accuracy of get_background_infos function
-    query = "羽絨被"
+    query = "康適四孔棉抗菌被有哪些尺寸？"
     # print(search_data(query, score_threshold=0.7))
     print(search_product_data(query))

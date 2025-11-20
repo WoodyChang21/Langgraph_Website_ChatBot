@@ -31,4 +31,4 @@ def product_data_processing():
 
 if __name__ == "__main__":
     qa_data_processing()
-    # product_data_processing()
+    product_data_processing()
